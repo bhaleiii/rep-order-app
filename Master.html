@@ -1,0 +1,458 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Extremity Medical — Surgical Sales Order (One‑Click)</title>
+  <style>
+    :root{
+      --bg:#f8fafc;
+      --card:#ffffff;
+      --border:#e2e8f0;
+      --muted:#64748b;
+      --text:#0f172a;
+      --accent:#1f5aa6;
+      --zebra:#f1f5f9;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;color:var(--text);background:var(--bg)}
+    .wrap{max-width:1160px;margin:0 auto;padding:16px}
+    .toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;margin-bottom:12px}
+    .title{display:flex;flex-direction:column;gap:2px}
+    .title h1{margin:0;font-size:20px;letter-spacing:-.02em}
+    .title p{margin:0;font-size:13px;color:var(--muted)}
+    .btns{display:flex;flex-wrap:wrap;gap:8px}
+    button{border:1px solid var(--border);background:#fff;border-radius:12px;padding:10px 12px;font-weight:700;font-size:13px;cursor:pointer}
+    button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+    button.secondary{background:#eef2ff}
+    button:active{transform:translateY(1px)}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:18px;box-shadow:0 1px 0 rgba(15,23,42,.03);padding:16px}
+    .header{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+    .brand{display:flex;gap:12px;align-items:center}
+    .logo{
+      width:220px;height:56px;border:1px dashed var(--border);border-radius:14px;
+      display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:12px;background:#fff;
+      overflow:hidden;
+    }
+    .brandmeta{display:none}
+    @media (min-width: 860px){.brandmeta{display:block}}
+    .brandmeta .name{font-weight:800}
+    .brandmeta .meta{font-size:12px;color:var(--muted);line-height:1.35}
+    .docTitle{text-align:right}
+    .docTitle .big{font-size:24px;font-weight:900;letter-spacing:-.02em}
+    .docTitle .small{font-size:12px;color:var(--muted)}
+    hr{border:none;border-top:1px solid var(--border);margin:14px 0}
+    .grid2{display:grid;grid-template-columns:1fr;gap:12px}
+    @media (min-width: 860px){.grid2{grid-template-columns:1fr 1fr}}
+    .section{border:1px solid var(--border);border-radius:16px;padding:12px}
+    .section h3{margin:0 0 10px 0;font-size:14px}
+    .fields{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .field{display:flex;flex-direction:column;gap:6px}
+    label{font-size:11px;color:var(--muted);font-weight:800}
+    input, select, textarea{
+      width:100%;border:1px solid var(--border);border-radius:12px;padding:10px 10px;font-size:13px;outline:none;background:#fff
+    }
+    textarea{min-height:110px;resize:vertical}
+    .trace{display:grid;grid-template-columns:1fr;gap:12px}
+    @media (min-width: 860px){.trace{grid-template-columns:1fr 1fr 1fr}}
+    .hint{font-size:11px;color:var(--muted);margin-top:6px}
+    .tableWrap{border:1px solid var(--border);border-radius:16px;overflow:auto;background:#fff}
+    table{border-collapse:collapse;min-width:980px;width:100%;font-size:13px}
+    thead th{background:var(--zebra);text-align:left;padding:10px;border-bottom:1px solid var(--border);font-size:12px}
+    tbody td{padding:6px;border-bottom:1px solid var(--border);vertical-align:top}
+    tbody tr:nth-child(even){background:#fff}
+    tbody tr:nth-child(odd){background:rgba(241,245,249,.25)}
+    tfoot td{background:var(--zebra);padding:10px;font-weight:900;border-top:1px solid var(--border)}
+    .cell-input{padding:0}
+    .cell-input input{height:34px;border-radius:10px}
+    .cell-right input{text-align:right}
+    .right{text-align:right}
+    .mono{font-variant-numeric:tabular-nums}
+    .totals{display:grid;grid-template-columns:1fr;gap:12px}
+    @media (min-width: 860px){.totals{grid-template-columns:1fr 1fr}}
+    .pill{border:1px solid var(--border);border-radius:14px;background:rgba(241,245,249,.5);padding:10px 12px;text-align:right;font-weight:900}
+    .footer{display:grid;grid-template-columns:1fr;gap:10px;align-items:end}
+    @media (min-width: 860px){.footer{grid-template-columns:1fr 1fr 1fr}}
+    .footerNote{font-size:11px;color:var(--muted);text-align:right}
+    .logoImg{width:100%;height:100%;object-fit:contain;background:#fff}
+    @media print{
+      body{background:#fff}
+      .no-print{display:none !important}
+      .wrap{max-width:none;padding:0}
+      .card{border:none;box-shadow:none;border-radius:0}
+      input, select, textarea{border:0 !important}
+      .tableWrap{border:1px solid #999}
+      thead th{background:#eee !important}
+      .section{border:1px solid #999}
+      .logo{border:0}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="toolbar no-print">
+      <div class="title">
+        <h1>One‑Click Surgical Sales Order</h1>
+        <p>Open this file and start entering orders immediately — no installs, no logins.</p>
+      </div>
+      <div class="btns">
+        <button onclick="window.print()">Print / Save as PDF</button>
+        <button onclick="exportJSON()">Export JSON</button>
+        <button class="primary" onclick="emailCustomerService()">Email Customer Service</button>
+        <button class="secondary" onclick="resetAll()">Reset</button>
+      </div>
+    </div>
+
+    <div class="card" id="app">
+      <div class="header">
+        <div class="brand">
+          <div class="logo" title="Logo (top-left)">
+            <img id="logoImg" class="logoImg" alt="Company logo" style="display:none" />
+            <div id="logoPlaceholder">Logo (top-left)</div>
+          </div>
+          <div class="brandmeta">
+            <div class="name">Extremity Medical, LLC</div>
+            <div class="meta">300 Interpace Parkway, Bldg A, 2nd Flr • Parsippany, NJ 07054</div>
+            <div class="meta">Customer Service: 973-588-8980 ext. 200 • customerservice@extremitymedical.com</div>
+          </div>
+        </div>
+        <div class="docTitle">
+          <div class="big">SURGICAL SALES ORDER</div>
+          <div class="small">ERP-style order sheet • auto totals • tray & lot traceability</div>
+        </div>
+      </div>
+
+      <hr />
+
+      <div class="grid2">
+        <div class="section">
+          <h3>Case Information</h3>
+          <div class="fields">
+            <div class="field"><label>Surgery Date</label><input id="surgeryDate" placeholder="MM/DD/YYYY" /></div>
+            <div class="field"><label>Surgeon</label><input id="surgeon" placeholder="Dr. ..." /></div>
+            <div class="field"><label>Patient Name</label><input id="patientName" /></div>
+            <div class="field"><label>Hospital</label><input id="hospital" /></div>
+            <div class="field"><label>Hospital Contact</label><input id="contact" /></div>
+            <div class="field"><label>Phone</label><input id="phone" /></div>
+          </div>
+        </div>
+
+        <div class="section">
+          <h3>Order Information</h3>
+          <div class="fields">
+            <div class="field"><label>Distributor</label><input id="distributor" /></div>
+            <div class="field"><label>Sales Rep</label><input id="rep" /></div>
+            <div class="field"><label>PO Number</label><input id="poNumber" /></div>
+            <div class="field"><label>Tray Number (tracking)</label><input id="trayNumber" placeholder="e.g., TR-12345" /></div>
+            <div class="field"><label>Kit Type</label><input id="kitType" /></div>
+            <div class="field">
+              <label>Procedure (dropdown)</label>
+              <select id="procedure">
+                <option value="">Select…</option>
+                <option>Ankle Fusion</option><option>Bunionectomy</option><option>Calc Osteotomy</option><option>Hammer Toe</option>
+                <option>Lapidus/TMT</option><option>MCP</option><option>Midcarpal/4 Corner</option><option>MTP</option><option>Other</option>
+              </select>
+            </div>
+            <div class="field" id="procedureOtherWrap" style="display:none; grid-column: 1 / -1;">
+              <label>Procedure (Other)</label><input id="procedureOther" />
+            </div>
+            <div class="field">
+              <label>Shipping Method</label>
+              <select id="shippingMethod">
+                <option>FedEx 2nd Day</option><option>FedEx Overnight</option><option>FedEx Standard Overnight</option>
+                <option>UPS 2nd Day</option><option>UPS Next Day Air</option><option>Other</option>
+              </select>
+            </div>
+            <div class="field" id="shippingOtherWrap" style="display:none;">
+              <label>Shipping (Other)</label><input id="shippingOther" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <hr />
+
+      <div class="trace">
+        <div class="section"><h3>Lot / UDI Label 1</h3><input id="label1" placeholder="Scan/enter UDI or lot" /><div class="hint">Use for sterile label traceability.</div></div>
+        <div class="section"><h3>Lot / UDI Label 2</h3><input id="label2" placeholder="Scan/enter UDI or lot" /><div class="hint">Use for sterile label traceability.</div></div>
+        <div class="section"><h3>Lot / UDI Label 3</h3><input id="label3" placeholder="Scan/enter UDI or lot" /><div class="hint">Use for sterile label traceability.</div></div>
+      </div>
+
+      <hr />
+
+      <div class="section" style="border:none;padding:0;">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px;">
+          <div style="font-weight:900;">Product Line Items</div>
+          <div class="no-print" style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button onclick="addRow()">Add Row</button>
+            <button onclick="removeRow()">Remove Row</button>
+            <button onclick="resetTo15()">Reset to 15 Rows</button>
+          </div>
+        </div>
+        <div class="tableWrap">
+          <table>
+            <thead>
+              <tr>
+                <th style="width:56px;">Line</th>
+                <th style="width:140px;">Part #</th>
+                <th>Description</th>
+                <th style="width:140px;">Lot #</th>
+                <th style="width:90px;" class="right">Qty</th>
+                <th style="width:130px;" class="right">Unit Price</th>
+                <th style="width:140px;" class="right">Line Total</th>
+              </tr>
+            </thead>
+            <tbody id="itemsBody"></tbody>
+            <tfoot>
+              <tr>
+                <td colspan="6" class="right">Subtotal</td>
+                <td class="right mono" id="subtotalCell">0.00</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+
+      <hr />
+
+      <div class="totals">
+        <div class="section">
+          <h3>Additional Notes</h3>
+          <textarea id="notes" placeholder="Add any case/order notes…"></textarea>
+        </div>
+        <div class="section">
+          <h3>Totals (Automatic)</h3>
+          <div class="field">
+            <label>Shipping & Handling</label>
+            <input id="shipping" class="right mono" placeholder="0.00" inputmode="decimal" />
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;">
+            <div>
+              <div style="font-size:11px;color:var(--muted);font-weight:800;">Subtotal</div>
+              <div class="pill mono" id="subtotalPill">0.00</div>
+            </div>
+            <div>
+              <div style="font-size:11px;color:var(--muted);font-weight:800;">Grand Total</div>
+              <div class="pill mono" id="grandTotalPill">0.00</div>
+            </div>
+          </div>
+          <div class="hint" style="margin-top:10px;">Line totals and subtotal update automatically as you enter Qty and Unit Price.</div>
+        </div>
+      </div>
+
+      <hr />
+
+      <div class="footer">
+        <div class="field"><label>Rep Signature</label><input id="repSignature" placeholder="Type name" /></div>
+        <div class="field"><label>Submittal Date</label><input id="submitDate" placeholder="MM/DD/YYYY" /></div>
+        <div class="footerNote">
+          Submit completed orders to <b>customerservice@extremitymedical.com</b><br/>
+          Tip: Use <b>Print / Save as PDF</b> to attach a PDF to the email.
+        </div>
+      </div>
+
+      <div style="margin-top:10px;text-align:center;font-size:11px;color:var(--muted);">
+        Extremity Medical Surgical Order • One-click offline web app • Works in any modern browser
+      </div>
+
+      <div class="no-print" style="margin-top:10px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+        <div style="font-size:12px;color:var(--muted);font-weight:800;">Optional:</div>
+        <button onclick="chooseLogo()">Load Logo Image</button>
+        <div style="font-size:12px;color:var(--muted);">Choose a PNG/JPG to show in the top-left logo area (saved in this browser only).</div>
+        <input id="logoFile" type="file" accept="image/*" style="display:none" />
+      </div>
+    </div>
+  </div>
+
+<script>
+  const MAX_DEFAULT_ROWS = 15;
+  function fmtMoney(n){ const v = Number.isFinite(n) ? n : 0; return v.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}); }
+  function num(v){ if(v===null||v===undefined) return 0; const s=String(v).replace(/,/g,''); const n=Number(s); return Number.isFinite(n)?n:0; }
+  function makeRow(){ return { part:'', desc:'', lot:'', qty:'', price:'' }; }
+
+  let rows = Array.from({length: MAX_DEFAULT_ROWS}, ()=>makeRow());
+  const body = document.getElementById('itemsBody');
+
+  function renderTable(){
+    body.innerHTML='';
+    rows.forEach((r,i)=>{
+      const tr=document.createElement('tr');
+
+      const tdLine=document.createElement('td'); tdLine.textContent=i+1; tdLine.className='mono'; tr.appendChild(tdLine);
+      tr.appendChild(cellInput('part',i,140));
+      tr.appendChild(cellInput('desc',i,null));
+      tr.appendChild(cellInput('lot',i,140));
+      tr.appendChild(cellInput('qty',i,90,true,'numeric'));
+      tr.appendChild(cellInput('price',i,130,true,'decimal'));
+
+      const tdTotal=document.createElement('td'); tdTotal.className='right mono'; tdTotal.id=`total_${i}`; tdTotal.textContent='0.00'; tr.appendChild(tdTotal);
+      body.appendChild(tr);
+    });
+    recalc();
+  }
+
+  function cellInput(key,idx,width,right=false,inputmode=null){
+    const td=document.createElement('td'); td.className='cell-input'+(right?' cell-right':'');
+    const inp=document.createElement('input');
+    inp.value=rows[idx][key];
+    inp.style.width=width? (width-12)+'px' : '100%';
+    inp.placeholder = key==='qty' ? '0' : (key==='price' ? '0.00' : '');
+    if(inputmode) inp.inputMode=inputmode;
+    inp.addEventListener('input',(e)=>{ rows[idx][key]=e.target.value; recalc(); });
+    td.appendChild(inp);
+    return td;
+  }
+
+  function recalc(){
+    let subtotal=0;
+    rows.forEach((r,i)=>{
+      const qty=num(r.qty), price=num(r.price), total=qty*price;
+      subtotal += total;
+      const cell=document.getElementById(`total_${i}`); if(cell) cell.textContent=fmtMoney(total);
+    });
+    const shipping=num(document.getElementById('shipping').value);
+    const grand=subtotal+shipping;
+    document.getElementById('subtotalCell').textContent=fmtMoney(subtotal);
+    document.getElementById('subtotalPill').textContent=fmtMoney(subtotal);
+    document.getElementById('grandTotalPill').textContent=fmtMoney(grand);
+  }
+  document.getElementById('shipping').addEventListener('input', recalc);
+
+  window.addRow = function(){ rows.push(makeRow()); renderTable(); }
+  window.removeRow = function(){ if(rows.length<=1) return; rows.pop(); renderTable(); }
+  window.resetTo15 = function(){ rows = Array.from({length: MAX_DEFAULT_ROWS}, ()=>makeRow()); renderTable(); }
+
+  const procedure=document.getElementById('procedure');
+  const procedureOtherWrap=document.getElementById('procedureOtherWrap');
+  procedure.addEventListener('change',()=>{ procedureOtherWrap.style.display = (procedure.value==='Other') ? 'block' : 'none'; });
+
+  const shippingMethod=document.getElementById('shippingMethod');
+  const shippingOtherWrap=document.getElementById('shippingOtherWrap');
+  shippingMethod.addEventListener('change',()=>{ shippingOtherWrap.style.display = (shippingMethod.value==='Other') ? 'block' : 'none'; });
+
+  function v(id){ const el=document.getElementById(id); return el ? el.value : ''; }
+
+  function collect(){
+    return {
+      caseInfo:{ surgeryDate:v('surgeryDate'), surgeon:v('surgeon'), patientName:v('patientName'), hospital:v('hospital'), contact:v('contact'), phone:v('phone') },
+      orderInfo:{ distributor:v('distributor'), rep:v('rep'), poNumber:v('poNumber'), trayNumber:v('trayNumber'), kitType:v('kitType'),
+        procedure:v('procedure'), procedureOther:v('procedureOther'), shippingMethod:v('shippingMethod'), shippingOther:v('shippingOther') },
+      traceability:{ label1:v('label1'), label2:v('label2'), label3:v('label3') },
+      lineItems: rows.map((r,i)=>({ line:i+1, part:r.part, description:r.desc, lot:r.lot, qty:num(r.qty), unitPrice:num(r.price), lineTotal:num(r.qty)*num(r.price) })),
+      totals:{ subtotal:num(document.getElementById('subtotalCell').textContent), shipping:num(v('shipping')), grandTotal:num(document.getElementById('grandTotalPill').textContent) },
+      notes:v('notes'),
+      signature:{ repSignature:v('repSignature'), submitDate:v('submitDate') },
+      generatedAt:new Date().toISOString()
+    };
+  }
+
+  window.exportJSON = function(){
+    const data=collect();
+    const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a'); a.href=url; a.download=`sales-order-${Date.now()}.json`; a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  window.emailCustomerService = function(){
+    const data=collect();
+    const to='customerservice@extremitymedical.com';
+    const subject=`Extremity Medical Sales Order – ${data.caseInfo.surgeryDate || '(date TBD)'}`;
+    const lines=data.lineItems.filter(li=>li.part||li.description||li.lot||li.qty||li.unitPrice).slice(0,30)
+      .map(li=>`${li.line}. Part: ${li.part||'-'} | Desc: ${li.description||'-'} | Lot: ${li.lot||'-'} | Qty: ${li.qty} | Unit: ${fmtMoney(li.unitPrice)} | Total: ${fmtMoney(li.lineTotal)}`);
+    const body=[
+      'Please find the sales order details below.',
+      'Tip: Use Print / Save as PDF in the app and attach the PDF to this email.',
+      '',
+      'CASE INFORMATION',
+      `Surgery Date: ${data.caseInfo.surgeryDate||''}`,
+      `Surgeon: ${data.caseInfo.surgeon||''}`,
+      `Patient: ${data.caseInfo.patientName||''}`,
+      `Hospital: ${data.caseInfo.hospital||''}`,
+      `Contact: ${data.caseInfo.contact||''}`,
+      `Phone: ${data.caseInfo.phone||''}`,
+      '',
+      'ORDER INFORMATION',
+      `Distributor: ${data.orderInfo.distributor||''}`,
+      `Sales Rep: ${data.orderInfo.rep||''}`,
+      `PO #: ${data.orderInfo.poNumber||''}`,
+      `Tray #: ${data.orderInfo.trayNumber||''}`,
+      `Kit Type: ${data.orderInfo.kitType||''}`,
+      `Procedure: ${data.orderInfo.procedure||''}${data.orderInfo.procedure==='Other' ? ` (${data.orderInfo.procedureOther||''})` : ''}`,
+      `Shipping: ${data.orderInfo.shippingMethod||''}${data.orderInfo.shippingMethod==='Other' ? ` (${data.orderInfo.shippingOther||''})` : ''}`,
+      '',
+      'LOT TRACEABILITY / LABELS',
+      `Label/UDI 1: ${data.traceability.label1||''}`,
+      `Label/UDI 2: ${data.traceability.label2||''}`,
+      `Label/UDI 3: ${data.traceability.label3||''}`,
+      '',
+      'LINE ITEMS',
+      ...lines,
+      '',
+      `Subtotal: ${fmtMoney(data.totals.subtotal)}`,
+      `Shipping & Handling: ${fmtMoney(data.totals.shipping)}`,
+      `Grand Total: ${fmtMoney(data.totals.grandTotal)}`,
+      '',
+      'Notes:',
+      data.notes||'',
+      '',
+      `Rep Signature: ${data.signature.repSignature||''}`,
+      `Date: ${data.signature.submitDate||''}`
+    ].join('\n');
+    const url=`mailto:${encodeURIComponent(to)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    window.location.href=url;
+  }
+
+  window.resetAll = function(){
+    const ids=['surgeryDate','surgeon','patientName','hospital','contact','phone','distributor','rep','poNumber','trayNumber','kitType','procedure','procedureOther','shippingMethod','shippingOther','label1','label2','label3','shipping','notes','repSignature','submitDate'];
+    ids.forEach(id=>{ const el=document.getElementById(id); if(!el) return; if(el.tagName==='SELECT') el.selectedIndex=0; else el.value=''; });
+    document.getElementById('shippingMethod').value='FedEx 2nd Day';
+    procedureOtherWrap.style.display='none'; shippingOtherWrap.style.display='none';
+    rows = Array.from({length: MAX_DEFAULT_ROWS}, ()=>makeRow());
+    renderTable();
+  }
+
+  // Optional logo loader (stored in localStorage)
+  const logoFile=document.getElementById('logoFile');
+  const logoImg=document.getElementById('logoImg');
+  const logoPlaceholder=document.getElementById('logoPlaceholder');
+
+  window.chooseLogo = function(){ logoFile.click(); }
+  logoFile.addEventListener('change',(e)=>{
+    const file=e.target.files && e.target.files[0]; if(!file) return;
+    const reader=new FileReader();
+    reader.onload=()=>{
+      const dataUrl=reader.result;
+      try{ localStorage.setItem('em_logo_dataurl', dataUrl); }catch(_){}
+      applyLogo(dataUrl);
+    };
+    reader.readAsDataURL(file);
+  });
+
+  function applyLogo(dataUrl){
+    if(!dataUrl) return;
+    logoImg.src=dataUrl;
+    logoImg.style.display='block';
+    logoPlaceholder.style.display='none';
+  }
+
+  (function init(){
+    renderTable();
+    // Default submit date to today
+    const sd=document.getElementById('submitDate');
+    if(!sd.value){
+      const d=new Date();
+      const mm=String(d.getMonth()+1).padStart(2,'0');
+      const dd=String(d.getDate()).padStart(2,'0');
+      const yy=d.getFullYear();
+      sd.value=`${mm}/${dd}/${yy}`;
+    }
+    // Restore logo if present
+    try{
+      const dataUrl=localStorage.getItem('em_logo_dataurl');
+      if(dataUrl) applyLogo(dataUrl);
+    }catch(_){}
+  })();
+</script>
+</body>
+</html>
