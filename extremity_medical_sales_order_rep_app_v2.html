@@ -1,0 +1,736 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Extremity Medical — Surgical Rep Order App</title>
+  <style>
+    :root{
+      --bg:#f8fafc; --card:#ffffff; --border:#e2e8f0; --muted:#64748b; --text:#0f172a;
+      --accent:#1f5aa6; --accent2:#d9e7ff; --danger:#b91c1c; --ok:#0f766e; --zebra:#f1f5f9;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;color:var(--text);background:var(--bg)}
+    .wrap{max-width:1180px;margin:0 auto;padding:16px}
+    .topbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin-bottom:12px}
+    .brandline{display:flex;flex-direction:column;gap:2px}
+    .brandline .h1{font-size:18px;font-weight:900;letter-spacing:-.02em;margin:0}
+    .brandline .sub{font-size:12px;color:var(--muted);margin:0}
+    .btns{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+    button{border:1px solid var(--border);background:#fff;border-radius:12px;padding:10px 12px;font-weight:800;font-size:13px;cursor:pointer}
+    button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+    button.secondary{background:#eef2ff}
+    button.danger{background:rgba(185,28,28,.08);border-color:rgba(185,28,28,.25);color:var(--danger)}
+    button:active{transform:translateY(1px)}
+    .pill{display:inline-flex;gap:8px;align-items:center;border:1px solid var(--border);border-radius:999px;background:#fff;padding:8px 10px;font-size:12px;color:var(--muted)}
+    .pill b{color:var(--text)}
+    .tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+    .tab{padding:9px 12px;border-radius:999px;border:1px solid var(--border);background:#fff;font-weight:900;font-size:12px;color:var(--muted);cursor:pointer}
+    .tab.active{background:var(--accent2);border-color:#bcd3ff;color:#0b2a5a}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:18px;box-shadow:0 1px 0 rgba(15,23,42,.03);padding:16px}
+    .header{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+    .brand{display:flex;gap:12px;align-items:center}
+    .logo{
+      width:220px;height:56px;border:1px dashed var(--border);border-radius:14px;
+      display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:12px;background:#fff;overflow:hidden
+    }
+    .logoImg{width:100%;height:100%;object-fit:contain;background:#fff}
+    .brandmeta{display:none}
+    @media (min-width: 860px){.brandmeta{display:block}}
+    .brandmeta .name{font-weight:900}
+    .brandmeta .meta{font-size:12px;color:var(--muted);line-height:1.35}
+    .docTitle{text-align:right}
+    .docTitle .big{font-size:22px;font-weight:950;letter-spacing:-.02em}
+    .docTitle .small{font-size:12px;color:var(--muted)}
+    hr{border:none;border-top:1px solid var(--border);margin:14px 0}
+    .grid2{display:grid;grid-template-columns:1fr;gap:12px}
+    @media (min-width: 860px){.grid2{grid-template-columns:1fr 1fr}}
+    .section{border:1px solid var(--border);border-radius:16px;padding:12px}
+    .section h3{margin:0 0 10px 0;font-size:14px}
+    .fields{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .field{display:flex;flex-direction:column;gap:6px}
+    label{font-size:11px;color:var(--muted);font-weight:900}
+    input, select, textarea{
+      width:100%;border:1px solid var(--border);border-radius:12px;padding:10px 10px;font-size:13px;outline:none;background:#fff
+    }
+    textarea{min-height:110px;resize:vertical}
+    .hint{font-size:11px;color:var(--muted);margin-top:6px}
+    .tableWrap{border:1px solid var(--border);border-radius:16px;overflow:auto;background:#fff}
+    table{border-collapse:collapse;min-width:980px;width:100%;font-size:13px}
+    thead th{background:var(--zebra);text-align:left;padding:10px;border-bottom:1px solid var(--border);font-size:12px}
+    tbody td{padding:6px;border-bottom:1px solid var(--border);vertical-align:top}
+    tbody tr:nth-child(odd){background:rgba(241,245,249,.25)}
+    tfoot td{background:var(--zebra);padding:10px;font-weight:950;border-top:1px solid var(--border)}
+    .cell-input{padding:0}
+    .cell-input input{height:34px;border-radius:10px}
+    .cell-right input{text-align:right}
+    .right{text-align:right}
+    .mono{font-variant-numeric:tabular-nums}
+    .two{display:grid;grid-template-columns:1fr;gap:12px}
+    @media (min-width: 860px){.two{grid-template-columns:2fr 1fr}}
+    .pillbox{border:1px solid var(--border);border-radius:14px;background:rgba(241,245,249,.5);padding:10px 12px;text-align:right;font-weight:950}
+    .footer{display:grid;grid-template-columns:1fr;gap:10px;align-items:end}
+    @media (min-width: 860px){.footer{grid-template-columns:1fr 1fr 1fr}}
+    .footerNote{font-size:11px;color:var(--muted);text-align:right}
+    .list{display:flex;flex-direction:column;gap:10px}
+    .orderCard{border:1px solid var(--border);border-radius:16px;background:#fff;padding:12px}
+    .orderCardTop{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+    .orderCardTop .id{font-weight:950}
+    .orderCardTop .meta{font-size:12px;color:var(--muted)}
+    .orderCardActions{display:flex;gap:8px;flex-wrap:wrap}
+    .smallbtn{padding:8px 10px;border-radius:12px;font-size:12px}
+    .ok{color:var(--ok);font-weight:900}
+    .warn{color:var(--danger);font-weight:900}
+    @media print{
+      body{background:#fff}
+      .no-print{display:none !important}
+      .wrap{max-width:none;padding:0}
+      .card{border:none;box-shadow:none;border-radius:0}
+      input, select, textarea{border:0 !important}
+      .tableWrap{border:1px solid #999}
+      thead th{background:#eee !important}
+      .section{border:1px solid #999}
+      .logo{border:0}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar no-print">
+      <div class="brandline">
+        <div class="h1">Surgical Rep Order App</div>
+        <div class="sub">Auto order numbers • auto totals • tray tracking • lot/UDI traceability • local history • optional Google Sheet sync</div>
+      </div>
+      <div class="btns">
+        <span class="pill mono"><b id="orderIdPill">—</b><span>Order ID</span></span>
+        <button onclick="saveDraft()">Save Draft</button>
+        <button class="primary" onclick="finalizeOrder()">Finalize & Save</button>
+        <button onclick="window.print()">Print / Save as PDF</button>
+      </div>
+    </div>
+
+    <div class="tabs no-print">
+      <div class="tab active" data-tab="order" onclick="switchTab('order')">Order Entry</div>
+      <div class="tab" data-tab="history" onclick="switchTab('history')">Order History</div>
+      <div class="tab" data-tab="settings" onclick="switchTab('settings')">Settings</div>
+    </div>
+
+    <!-- ORDER ENTRY -->
+    <div id="tab_order" class="card">
+      <div class="header">
+        <div class="brand">
+          <div class="logo" title="Logo (top-left)">
+            <img id="logoImg" class="logoImg" alt="Company logo" style="display:none" />
+            <div id="logoPlaceholder">Logo (top-left)</div>
+          </div>
+          <div class="brandmeta">
+            <div class="name">Extremity Medical, LLC</div>
+            <div class="meta">300 Interpace Parkway, Bldg A, 2nd Flr • Parsippany, NJ 07054</div>
+            <div class="meta">Customer Service: 973-588-8980 ext. 200 • customerservice@extremitymedical.com</div>
+          </div>
+        </div>
+        <div class="docTitle">
+          <div class="big">SURGICAL SALES ORDER</div>
+          <div class="small">Rep ordering sheet • ERP-style layout</div>
+        </div>
+      </div>
+
+      <hr />
+
+      <div class="grid2">
+        <div class="section">
+          <h3>Case Information</h3>
+          <div class="fields">
+            <div class="field"><label>Surgery Date</label><input id="surgeryDate" placeholder="MM/DD/YYYY" /></div>
+            <div class="field"><label>Surgeon</label><input id="surgeon" placeholder="Dr. ..." /></div>
+            <div class="field"><label>Patient Name</label><input id="patientName" /></div>
+            <div class="field"><label>Hospital</label><input id="hospital" /></div>
+            <div class="field"><label>Hospital Contact</label><input id="contact" /></div>
+            <div class="field"><label>Phone</label><input id="phone" /></div>
+          </div>
+        </div>
+
+        <div class="section">
+          <h3>Order Information</h3>
+          <div class="fields">
+            <div class="field"><label>Distributor</label><input id="distributor" /></div>
+            <div class="field"><label>Sales Rep</label><input id="rep" /></div>
+            <div class="field"><label>PO Number</label><input id="poNumber" /></div>
+            <div class="field"><label>Tray Number (tracking)</label><input id="trayNumber" placeholder="e.g., TR-12345" /></div>
+            <div class="field"><label>Kit Type</label><input id="kitType" /></div>
+            <div class="field">
+              <label>Procedure (dropdown)</label>
+              <select id="procedure">
+                <option value="">Select…</option>
+                <option>Ankle Fusion</option><option>Bunionectomy</option><option>Calc Osteotomy</option><option>Hammer Toe</option>
+                <option>Lapidus/TMT</option><option>MCP</option><option>Midcarpal/4 Corner</option><option>MTP</option><option>Other</option>
+              </select>
+            </div>
+            <div class="field" id="procedureOtherWrap" style="display:none; grid-column: 1 / -1;">
+              <label>Procedure (Other)</label><input id="procedureOther" />
+            </div>
+            <div class="field">
+              <label>Shipping Method</label>
+              <select id="shippingMethod">
+                <option>FedEx 2nd Day</option><option>FedEx Overnight</option><option>FedEx Standard Overnight</option>
+                <option>UPS 2nd Day</option><option>UPS Next Day Air</option><option>Other</option>
+              </select>
+            </div>
+            <div class="field" id="shippingOtherWrap" style="display:none;">
+              <label>Shipping (Other)</label><input id="shippingOther" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <hr />
+
+      <div class="section">
+        <h3>Lot / UDI Traceability</h3>
+        <div class="fields">
+          <div class="field">
+            <label>Label / UDI 1</label>
+            <input id="label1" placeholder="Scan/enter UDI or lot" />
+            <div class="hint no-print"><button class="smallbtn" onclick="scanInto('label1')">Scan → Label 1</button></div>
+          </div>
+          <div class="field">
+            <label>Label / UDI 2</label>
+            <input id="label2" placeholder="Scan/enter UDI or lot" />
+            <div class="hint no-print"><button class="smallbtn" onclick="scanInto('label2')">Scan → Label 2</button></div>
+          </div>
+          <div class="field">
+            <label>Label / UDI 3</label>
+            <input id="label3" placeholder="Scan/enter UDI or lot" />
+            <div class="hint no-print"><button class="smallbtn" onclick="scanInto('label3')">Scan → Label 3</button></div>
+          </div>
+          <div class="field">
+            <label>UDI / Lot Notes</label>
+            <input id="udiNotes" placeholder="Optional" />
+          </div>
+        </div>
+        <div class="hint">Barcode scanning is device/browser dependent. If unavailable, type/paste codes.</div>
+      </div>
+
+      <hr />
+
+      <div class="section" style="border:none;padding:0;">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px;">
+          <div style="font-weight:950;">Product Line Items</div>
+          <div class="no-print" style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button class="smallbtn" onclick="addRow()">Add Row</button>
+            <button class="smallbtn" onclick="removeRow()">Remove Row</button>
+            <button class="smallbtn" onclick="resetTo15()">Reset to 15 Rows</button>
+          </div>
+        </div>
+
+        <div class="tableWrap">
+          <table>
+            <thead>
+              <tr>
+                <th style="width:56px;">Line</th>
+                <th style="width:140px;">Part #</th>
+                <th>Description</th>
+                <th style="width:140px;">Lot #</th>
+                <th style="width:90px;" class="right">Qty</th>
+                <th style="width:130px;" class="right">Unit Price</th>
+                <th style="width:140px;" class="right">Line Total</th>
+              </tr>
+            </thead>
+            <tbody id="itemsBody"></tbody>
+            <tfoot>
+              <tr>
+                <td colspan="6" class="right">Subtotal</td>
+                <td class="right mono" id="subtotalCell">0.00</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+
+      <hr />
+
+      <div class="two">
+        <div class="section">
+          <h3>Additional Notes</h3>
+          <textarea id="notes" placeholder="Add any case/order notes…"></textarea>
+        </div>
+
+        <div>
+          <div class="section">
+            <h3>Totals (Automatic)</h3>
+            <div class="field">
+              <label>Shipping & Handling</label>
+              <input id="shipping" class="right mono" placeholder="0.00" inputmode="decimal" />
+            </div>
+            <div style="display:grid;grid-template-columns:1fr;gap:10px;margin-top:10px;">
+              <div>
+                <div style="font-size:11px;color:var(--muted);font-weight:900;">Subtotal</div>
+                <div class="pillbox mono" id="subtotalPill">0.00</div>
+              </div>
+              <div>
+                <div style="font-size:11px;color:var(--muted);font-weight:900;">Grand Total</div>
+                <div class="pillbox mono" id="grandTotalPill">0.00</div>
+              </div>
+            </div>
+          </div>
+
+          <hr />
+
+          <div class="section">
+            <h3>Signature</h3>
+            <div class="field"><label>Rep Signature</label><input id="repSignature" placeholder="Type name" /></div>
+            <div class="field"><label>Submittal Date</label><input id="submitDate" placeholder="MM/DD/YYYY" /></div>
+          </div>
+
+          <hr />
+
+          <div class="section no-print">
+            <h3>Actions</h3>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <button onclick="chooseLogo()">Load Logo</button>
+              <button onclick="emailCustomerService()">Email Customer Service</button>
+              <button onclick="exportJSON()">Export JSON</button>
+              <button class="primary" onclick="pushToCloud()">Push to Google Sheet</button>
+              <button class="danger" onclick="resetAll()">Reset Form</button>
+            </div>
+            <div class="hint" id="cloudHint"></div>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:10px;text-align:center;font-size:11px;color:var(--muted);">
+        Extremity Medical Surgical Order • Rep app v2 • Offline-first • Local history + optional cloud sync
+      </div>
+
+      <input id="logoFile" type="file" accept="image/*" style="display:none" />
+    </div>
+
+    <!-- HISTORY -->
+    <div id="tab_history" class="card" style="display:none;">
+      <div class="orderCardTop" style="margin-bottom:10px;">
+        <div>
+          <div style="font-weight:950;font-size:16px;">Order History (This Browser)</div>
+          <div class="meta">Finalized orders are stored locally. Open, export, email, or push to Google Sheets.</div>
+        </div>
+        <div class="orderCardActions">
+          <button onclick="refreshHistory()">Refresh</button>
+          <button class="danger" onclick="clearHistory()">Delete All History</button>
+        </div>
+      </div>
+      <div id="historyList" class="list"></div>
+      <div class="hint">Local history is stored on this device/browser.</div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div id="tab_settings" class="card" style="display:none;">
+      <div style="font-weight:950;font-size:16px;margin-bottom:6px;">Settings</div>
+      <div class="hint">These settings are stored locally in your browser.</div>
+      <hr />
+      <div class="section">
+        <h3>Google Sheets Cloud Endpoint (Apps Script Web App)</h3>
+        <div class="field">
+          <label>Apps Script Web App URL</label>
+          <input id="appsScriptUrl" placeholder="https://script.google.com/macros/s/XXXXX/exec" />
+          <div class="hint">Set this to enable cloud sync.</div>
+        </div>
+        <button class="primary" onclick="saveSettings()">Save Settings</button>
+        <div class="hint" id="settingsStatus"></div>
+      </div>
+      <hr />
+      <div class="section">
+        <h3>Logo</h3>
+        <button onclick="chooseLogo()">Load Logo Image</button>
+        <button class="danger" onclick="clearLogo()">Remove Logo</button>
+      </div>
+      <hr />
+      <div class="section">
+        <h3>Limitations</h3>
+        <div class="hint">
+          • Email uses mailto and cannot auto-attach PDFs. Print/Save as PDF and attach manually.<br/>
+          • Barcode scan uses the browser BarcodeDetector API and may not be available on some devices.
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+  const MAX_DEFAULT_ROWS = 15;
+  const HISTORY_KEY = 'em_rep_app_orders_v1';
+  const DRAFT_KEY = 'em_rep_app_draft_v1';
+  const SETTINGS_KEY = 'em_rep_app_settings_v1';
+  const LOGO_KEY = 'em_logo_dataurl';
+
+  function fmtMoney(n){ const v = Number.isFinite(n) ? n : 0; return v.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}); }
+  function num(v){ if(v===null||v===undefined) return 0; const s=String(v).replace(/,/g,''); const n=Number(s); return Number.isFinite(n)?n:0; }
+  function v(id){ const el=document.getElementById(id); return el ? el.value : ''; }
+  function setv(id,val){ const el=document.getElementById(id); if(el) el.value = val ?? ''; }
+  function nowISO(){ return new Date().toISOString(); }
+  function genOrderId(){
+    const d=new Date(); const pad=(x)=>String(x).padStart(2,'0');
+    const y=d.getFullYear(), m=pad(d.getMonth()+1), da=pad(d.getDate());
+    const hh=pad(d.getHours()), mm=pad(d.getMinutes()), ss=pad(d.getSeconds());
+    const rand=Math.floor(Math.random()*9000)+1000;
+    return `EM-${y}${m}${da}-${hh}${mm}${ss}-${rand}`;
+  }
+  function makeRow(){ return { part:'', desc:'', lot:'', qty:'', price:'' }; }
+
+  let rows = Array.from({length: MAX_DEFAULT_ROWS}, ()=>makeRow());
+  const body = document.getElementById('itemsBody');
+
+  let currentOrderId = genOrderId();
+  let currentStatus = 'Draft';
+
+  function setStatus(s){ currentStatus = s; }
+
+  // Tabs
+  window.switchTab = function(tab){
+    document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active', t.dataset.tab===tab));
+    document.getElementById('tab_order').style.display = (tab==='order') ? 'block' : 'none';
+    document.getElementById('tab_history').style.display = (tab==='history') ? 'block' : 'none';
+    document.getElementById('tab_settings').style.display = (tab==='settings') ? 'block' : 'none';
+    if(tab==='history') refreshHistory();
+  }
+
+  // Table
+  function renderTable(){
+    body.innerHTML='';
+    rows.forEach((r,i)=>{
+      const tr=document.createElement('tr');
+      const tdLine=document.createElement('td'); tdLine.textContent=i+1; tdLine.className='mono'; tr.appendChild(tdLine);
+      tr.appendChild(cellInput('part',i,140));
+      tr.appendChild(cellInput('desc',i,null));
+      tr.appendChild(cellInput('lot',i,140));
+      tr.appendChild(cellInput('qty',i,90,true,'numeric'));
+      tr.appendChild(cellInput('price',i,130,true,'decimal'));
+      const tdTotal=document.createElement('td'); tdTotal.className='right mono'; tdTotal.id=`total_${i}`; tdTotal.textContent='0.00'; tr.appendChild(tdTotal);
+      body.appendChild(tr);
+    });
+    recalc();
+  }
+  function cellInput(key,idx,width,right=false,inputmode=null){
+    const td=document.createElement('td'); td.className='cell-input'+(right?' cell-right':'');
+    const inp=document.createElement('input');
+    inp.value=rows[idx][key];
+    inp.style.width=width? (width-12)+'px' : '100%';
+    inp.placeholder = key==='qty' ? '0' : (key==='price' ? '0.00' : '');
+    if(inputmode) inp.inputMode=inputmode;
+    inp.addEventListener('input',(e)=>{ rows[idx][key]=e.target.value; recalc(); setStatus('Draft'); });
+    td.appendChild(inp); return td;
+  }
+  function recalc(){
+    let subtotal=0;
+    rows.forEach((r,i)=>{
+      const qty=num(r.qty), price=num(r.price), total=qty*price;
+      subtotal += total;
+      const cell=document.getElementById(`total_${i}`); if(cell) cell.textContent=fmtMoney(total);
+    });
+    const shipping=num(document.getElementById('shipping').value);
+    const grand=subtotal+shipping;
+    document.getElementById('subtotalCell').textContent=fmtMoney(subtotal);
+    document.getElementById('subtotalPill').textContent=fmtMoney(subtotal);
+    document.getElementById('grandTotalPill').textContent=fmtMoney(grand);
+  }
+  document.getElementById('shipping').addEventListener('input', ()=>{ recalc(); setStatus('Draft'); });
+
+  window.addRow = function(){ rows.push(makeRow()); renderTable(); }
+  window.removeRow = function(){ if(rows.length<=1) return; rows.pop(); renderTable(); }
+  window.resetTo15 = function(){ rows = Array.from({length: MAX_DEFAULT_ROWS}, ()=>makeRow()); renderTable(); }
+
+  // Toggles
+  const procedure=document.getElementById('procedure');
+  const procedureOtherWrap=document.getElementById('procedureOtherWrap');
+  procedure.addEventListener('change',()=>{ procedureOtherWrap.style.display = (procedure.value==='Other') ? 'block' : 'none'; });
+  const shippingMethod=document.getElementById('shippingMethod');
+  const shippingOtherWrap=document.getElementById('shippingOtherWrap');
+  shippingMethod.addEventListener('change',()=>{ shippingOtherWrap.style.display = (shippingMethod.value==='Other') ? 'block' : 'none'; });
+
+  // Collect
+  function collect(){
+    return {
+      orderId: currentOrderId,
+      status: currentStatus,
+      caseInfo:{ surgeryDate:v('surgeryDate'), surgeon:v('surgeon'), patientName:v('patientName'), hospital:v('hospital'), contact:v('contact'), phone:v('phone') },
+      orderInfo:{ distributor:v('distributor'), rep:v('rep'), poNumber:v('poNumber'), trayNumber:v('trayNumber'), kitType:v('kitType'),
+        procedure:v('procedure'), procedureOther:v('procedureOther'), shippingMethod:v('shippingMethod'), shippingOther:v('shippingOther') },
+      traceability:{ label1:v('label1'), label2:v('label2'), label3:v('label3'), udiNotes:v('udiNotes') },
+      lineItems: rows.map((r,i)=>({ line:i+1, part:r.part, description:r.desc, lot:r.lot, qty:num(r.qty), unitPrice:num(r.price), lineTotal:num(r.qty)*num(r.price) })),
+      totals:{ subtotal:num(document.getElementById('subtotalCell').textContent), shipping:num(v('shipping')), grandTotal:num(document.getElementById('grandTotalPill').textContent) },
+      notes:v('notes'),
+      signature:{ repSignature:v('repSignature'), submitDate:v('submitDate') },
+      updatedAt: nowISO()
+    };
+  }
+
+  function getHistory(){
+    try{ const raw=localStorage.getItem(HISTORY_KEY); const arr=raw?JSON.parse(raw):[]; return Array.isArray(arr)?arr:[]; } catch(_){ return []; }
+  }
+  function setHistory(arr){ localStorage.setItem(HISTORY_KEY, JSON.stringify(arr)); }
+
+  window.saveDraft = function(){
+    const data=collect(); data.status='Draft'; setStatus('Draft');
+    localStorage.setItem(DRAFT_KEY, JSON.stringify(data));
+    alert('Draft saved locally.');
+  }
+
+  window.finalizeOrder = function(){
+    const data=collect(); data.status='Finalized'; setStatus('Finalized'); data.finalizedAt=nowISO();
+    const hist=getHistory(); const idx=hist.findIndex(o=>o.orderId===data.orderId);
+    if(idx>=0) hist[idx]=data; else hist.unshift(data);
+    setHistory(hist);
+    localStorage.removeItem(DRAFT_KEY);
+    alert('Order finalized and saved to history.');
+  }
+
+  window.exportJSON = function(){
+    const data=collect();
+    const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a'); a.href=url; a.download=`${data.orderId}-${Date.now()}.json`; a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  window.emailCustomerService = function(){
+    const data=collect();
+    const to='customerservice@extremitymedical.com';
+    const subject=`Extremity Medical Sales Order ${data.orderId} – ${data.caseInfo.surgeryDate || '(date TBD)'}`;
+    const lines=data.lineItems.filter(li=>li.part||li.description||li.lot||li.qty||li.unitPrice).slice(0,30)
+      .map(li=>`${li.line}. Part: ${li.part||'-'} | Desc: ${li.description||'-'} | Lot: ${li.lot||'-'} | Qty: ${li.qty} | Unit: ${fmtMoney(li.unitPrice)} | Total: ${fmtMoney(li.lineTotal)}`);
+    const body=[
+      `ORDER ID: ${data.orderId}`,
+      'Please find the sales order details below.',
+      'Tip: Print/Save as PDF in the app and attach the PDF to this email.',
+      '',
+      'CASE INFORMATION',
+      `Surgery Date: ${data.caseInfo.surgeryDate||''}`,
+      `Surgeon: ${data.caseInfo.surgeon||''}`,
+      `Patient: ${data.caseInfo.patientName||''}`,
+      `Hospital: ${data.caseInfo.hospital||''}`,
+      `Contact: ${data.caseInfo.contact||''}`,
+      `Phone: ${data.caseInfo.phone||''}`,
+      '',
+      'ORDER INFORMATION',
+      `Distributor: ${data.orderInfo.distributor||''}`,
+      `Sales Rep: ${data.orderInfo.rep||''}`,
+      `PO #: ${data.orderInfo.poNumber||''}`,
+      `Tray #: ${data.orderInfo.trayNumber||''}`,
+      `Kit Type: ${data.orderInfo.kitType||''}`,
+      `Procedure: ${data.orderInfo.procedure||''}${data.orderInfo.procedure==='Other' ? ` (${data.orderInfo.procedureOther||''})` : ''}`,
+      `Shipping: ${data.orderInfo.shippingMethod||''}${data.orderInfo.shippingMethod==='Other' ? ` (${data.orderInfo.shippingOther||''})` : ''}`,
+      '',
+      'LOT TRACEABILITY / LABELS',
+      `Label/UDI 1: ${data.traceability.label1||''}`,
+      `Label/UDI 2: ${data.traceability.label2||''}`,
+      `Label/UDI 3: ${data.traceability.label3||''}`,
+      `UDI Notes: ${data.traceability.udiNotes||''}`,
+      '',
+      'LINE ITEMS',
+      ...lines,
+      '',
+      `Subtotal: ${fmtMoney(data.totals.subtotal)}`,
+      `Shipping & Handling: ${fmtMoney(data.totals.shipping)}`,
+      `Grand Total: ${fmtMoney(data.totals.grandTotal)}`,
+      '',
+      'Notes:',
+      data.notes||'',
+      '',
+      `Rep Signature: ${data.signature.repSignature||''}`,
+      `Date: ${data.signature.submitDate||''}`
+    ].join('\n');
+    const url=`mailto:${encodeURIComponent(to)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    window.location.href=url;
+  }
+
+  window.resetAll = function(){
+    if(!confirm('Clear the current form?')) return;
+    const ids=['surgeryDate','surgeon','patientName','hospital','contact','phone','distributor','rep','poNumber','trayNumber','kitType','procedure','procedureOther','shippingMethod','shippingOther','label1','label2','label3','udiNotes','shipping','notes','repSignature','submitDate'];
+    ids.forEach(id=>{ const el=document.getElementById(id); if(!el) return; if(el.tagName==='SELECT') el.selectedIndex=0; else el.value=''; });
+    document.getElementById('shippingMethod').value='FedEx 2nd Day';
+    procedureOtherWrap.style.display='none'; shippingOtherWrap.style.display='none';
+    rows = Array.from({length: MAX_DEFAULT_ROWS}, ()=>makeRow());
+    renderTable();
+    currentOrderId = genOrderId();
+    document.getElementById('orderIdPill').textContent = currentOrderId;
+    setStatus('Draft');
+  }
+
+  // History UI
+  function summarize(o){
+    const hosp=o.caseInfo?.hospital||'';
+    const date=o.caseInfo?.surgeryDate||'';
+    const surgeon=o.caseInfo?.surgeon||'';
+    const total=o.totals?.grandTotal ?? 0;
+    return `${date} • ${hosp} • ${surgeon} • Total $${fmtMoney(Number(total)||0)}`;
+  }
+  window.refreshHistory = function(){
+    const list=document.getElementById('historyList');
+    const hist=getHistory();
+    if(!hist.length){ list.innerHTML='<div class="hint">No finalized orders yet.</div>'; return; }
+    list.innerHTML='';
+    hist.forEach(o=>{
+      const div=document.createElement('div');
+      div.className='orderCard';
+      div.innerHTML = `
+        <div class="orderCardTop">
+          <div>
+            <div class="id mono">${o.orderId}</div>
+            <div class="meta">${summarize(o)}</div>
+            <div class="meta">Updated: ${o.updatedAt ? new Date(o.updatedAt).toLocaleString() : ''}</div>
+          </div>
+          <div class="orderCardActions">
+            <button class="smallbtn" onclick="downloadOrder('${o.orderId}')">Export</button>
+            <button class="smallbtn" onclick="pushOrder('${o.orderId}')">Push</button>
+            <button class="smallbtn danger" onclick="deleteOrder('${o.orderId}')">Delete</button>
+          </div>
+        </div>
+      `;
+      list.appendChild(div);
+    });
+  }
+  window.downloadOrder = function(orderId){
+    const hist=getHistory(); const o=hist.find(x=>x.orderId===orderId); if(!o) return;
+    const blob=new Blob([JSON.stringify(o,null,2)],{type:'application/json'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a'); a.href=url; a.download=`${o.orderId}.json`; a.click();
+    URL.revokeObjectURL(url);
+  }
+  window.deleteOrder = function(orderId){
+    if(!confirm(`Delete order ${orderId}?`)) return;
+    setHistory(getHistory().filter(o=>o.orderId!==orderId));
+    refreshHistory();
+  }
+  window.clearHistory = function(){
+    if(!confirm('Delete ALL history on this device?')) return;
+    localStorage.removeItem(HISTORY_KEY);
+    refreshHistory();
+  }
+
+  // Settings / Cloud
+  function getSettings(){ try{ return JSON.parse(localStorage.getItem(SETTINGS_KEY)||'{}')||{}; }catch(_){ return {}; } }
+  function setSettings(s){ localStorage.setItem(SETTINGS_KEY, JSON.stringify(s)); }
+  window.saveSettings = function(){
+    const url=v('appsScriptUrl').trim();
+    const s=getSettings(); s.appsScriptUrl=url; setSettings(s);
+    document.getElementById('settingsStatus').textContent = url ? 'Saved.' : 'Cleared.';
+    refreshCloudHint();
+  }
+  function refreshCloudHint(){
+    const s=getSettings(); const url=(s.appsScriptUrl||'').trim();
+    const hint=document.getElementById('cloudHint'); if(!hint) return;
+    hint.innerHTML = url ? '<span class="ok">Cloud sync ready.</span>' : '<span class="warn">No Apps Script URL set.</span> Add it in Settings.';
+  }
+  window.pushToCloud = async function(){
+    const s=getSettings(); const url=(s.appsScriptUrl||'').trim();
+    if(!url){ alert('No Apps Script URL set. Go to Settings and paste your web app URL.'); return; }
+    const data=collect();
+    try{
+      const res = await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'upsert', order:data})});
+      const txt = await res.text();
+      if(!res.ok) throw new Error(txt || ('HTTP '+res.status));
+      alert('Pushed to Google Sheet.');
+    } catch(err){
+      alert('Cloud push failed: ' + (err?.message || err));
+    }
+  }
+  window.pushOrder = async function(orderId){
+    const s=getSettings(); const url=(s.appsScriptUrl||'').trim();
+    if(!url){ alert('No Apps Script URL set. Go to Settings and paste your web app URL.'); return; }
+    const hist=getHistory(); const o=hist.find(x=>x.orderId===orderId); if(!o){ alert('Order not found'); return; }
+    try{
+      const res = await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'upsert', order:o})});
+      const txt = await res.text();
+      if(!res.ok) throw new Error(txt || ('HTTP '+res.status));
+      alert('Pushed to Google Sheet.');
+    } catch(err){
+      alert('Cloud push failed: ' + (err?.message || err));
+    }
+  }
+
+  // Logo
+  const logoFile=document.getElementById('logoFile');
+  const logoImg=document.getElementById('logoImg');
+  const logoPlaceholder=document.getElementById('logoPlaceholder');
+  window.chooseLogo = function(){ logoFile.click(); }
+  logoFile.addEventListener('change',(e)=>{
+    const file=e.target.files && e.target.files[0]; if(!file) return;
+    const reader=new FileReader();
+    reader.onload=()=>{ const dataUrl=reader.result; try{ localStorage.setItem(LOGO_KEY,dataUrl); }catch(_){}
+      applyLogo(dataUrl); };
+    reader.readAsDataURL(file);
+  });
+  function applyLogo(dataUrl){
+    if(!dataUrl) return;
+    logoImg.src=dataUrl; logoImg.style.display='block'; logoPlaceholder.style.display='none';
+  }
+  window.clearLogo = function(){
+    localStorage.removeItem(LOGO_KEY);
+    logoImg.src=''; logoImg.style.display='none'; logoPlaceholder.style.display='block';
+  }
+
+  // Barcode scan (best-effort)
+  function barcodeAvailable(){ return ('BarcodeDetector' in window) && (typeof BarcodeDetector === 'function'); }
+  window.scanInto = async function(targetId){
+    if(!barcodeAvailable()){ alert('Barcode scanning is not available on this device/browser.'); return; }
+    const target=document.getElementById(targetId); if(!target) return;
+    const overlay=document.createElement('div');
+    overlay.style.position='fixed'; overlay.style.inset='0'; overlay.style.background='rgba(15,23,42,.6)';
+    overlay.style.display='flex'; overlay.style.alignItems='center'; overlay.style.justifyContent='center'; overlay.style.zIndex='9999';
+    const modal=document.createElement('div');
+    modal.style.width='min(720px,92vw)'; modal.style.background='#fff'; modal.style.borderRadius='16px';
+    modal.style.border='1px solid var(--border)'; modal.style.padding='12px';
+    modal.innerHTML = `
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px;">
+        <div style="font-weight:950;">Scan Barcode</div>
+        <button class="smallbtn" id="closeScanBtn">Close</button>
+      </div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:8px;">Point the camera at the UDI/GS1 barcode.</div>
+      <video id="scanVideo" autoplay playsinline style="width:100%;border-radius:12px;border:1px solid var(--border);background:#000;"></video>
+      <div id="scanMsg" style="font-size:12px;color:var(--muted);margin-top:8px;">Starting camera…</div>
+    `;
+    overlay.appendChild(modal); document.body.appendChild(overlay);
+    const closeBtn=modal.querySelector('#closeScanBtn');
+    const video=modal.querySelector('#scanVideo');
+    const msg=modal.querySelector('#scanMsg');
+    let stream=null; let stopped=false;
+    function cleanup(){ stopped=true; try{ if(stream) stream.getTracks().forEach(t=>t.stop()); }catch(_){}
+      overlay.remove(); }
+    closeBtn.addEventListener('click', cleanup);
+    overlay.addEventListener('click', (e)=>{ if(e.target===overlay) cleanup(); });
+    try{
+      stream = await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}, audio:false});
+      video.srcObject = stream;
+      msg.textContent = 'Scanning…';
+    } catch(err){
+      alert('Camera access failed: ' + (err?.message || err));
+      cleanup(); return;
+    }
+    const detector = new BarcodeDetector({ formats: ['qr_code','code_128','code_39','ean_13','ean_8','upc_a','upc_e','pdf417','data_matrix','aztec'] });
+    async function tick(){
+      if(stopped) return;
+      try{
+        const barcodes = await detector.detect(video);
+        if(barcodes && barcodes.length){
+          target.value = barcodes[0].rawValue || '';
+          cleanup(); return;
+        }
+      } catch(_){}
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  }
+
+  // Init
+  (function init(){
+    document.getElementById('orderIdPill').textContent = currentOrderId;
+    const sd=document.getElementById('submitDate');
+    if(!sd.value){
+      const d=new Date(); const pad=(x)=>String(x).padStart(2,'0');
+      sd.value = `${pad(d.getMonth()+1)}/${pad(d.getDate())}/${d.getFullYear()}`;
+    }
+    try{ const dataUrl=localStorage.getItem(LOGO_KEY); if(dataUrl) applyLogo(dataUrl); }catch(_){}
+    const s=getSettings(); if(s.appsScriptUrl) setv('appsScriptUrl', s.appsScriptUrl);
+    renderTable();
+    refreshCloudHint();
+  })();
+</script>
+</body>
+</html>
